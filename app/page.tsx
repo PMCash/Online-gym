@@ -7,23 +7,32 @@ export default function HomePage() {
   const router = useRouter()
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6">
-      <h1 className="text-4xl font-bold">
-        Interactive Online Gym Platform
-      </h1>
+    <div 
+      className="min-h-screen relative bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/gym-background.jpg')" }}
+    >
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content wrapper */}
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center gap-6">
+        <h1 className="text-4xl font-bold text-white">
+          Interactive Online Gym Platform
+        </h1>
 
-      <p className="text-gray-600 text-lg">
-        Smart Workouts. Anywhere. Anytime.
-      </p>
+        <p className="text-white text-xl font-semibold">
+          Smart Workouts. Anywhere. Anytime.
+        </p>
 
-      <div className="flex gap-4">
-        <Button onClick={() => router.push("/login")}>
-          Login
-        </Button>
+        <div className="flex gap-4">
+          <Button onClick={() => router.push("/login")}>
+            Login
+          </Button>
 
-        <Button variant="outline" onClick={() => router.push("/register")}>
-          Register
-        </Button>
+          <Button variant="outline" onClick={() => router.push("/register")}>
+            Register
+          </Button>
+        </div>
       </div>
     </div>
   )
