@@ -6,7 +6,8 @@ import { supabase } from "@/lib/supabaseClient"
 export default function UpgradeButton() {
   const [loading, setLoading] = useState(false)
 
-  const handleUpgrade = async () => {
+const handleUpgrade = async () => {
+  try {
     setLoading(true)
 
     const {
@@ -15,7 +16,6 @@ export default function UpgradeButton() {
 
     if (!user) {
       alert("You must be logged in.")
-      setLoading(false)
       return
     }
 
@@ -28,21 +28,33 @@ export default function UpgradeButton() {
       }),
     })
 
+    if (!response.ok) {
+      throw new Error("Failed to initialize payment")
+    }
+
     const data = await response.json()
 
     if (data.link) {
       window.location.href = data.link
     } else {
-      alert("Payment initialization failed")
-      setLoading(false)
+      throw new Error("No payment link returned")
     }
+
+  } catch (error) {
+    console.error(error)
+    alert("Payment initialization failed.")
+  } finally {
+    setLoading(false)
   }
+}
+
 
   return (
     <button
       onClick={handleUpgrade}
       disabled={loading}
-      className="bg-black text-white px-6 py-3 rounded-md"
+      className="px-4 py-2 rounded-md"
+    style={{ backgroundColor: "#000000", color: "#ffffff" }}
     >
       {loading ? "Processing..." : "Upgrade to Premium"}
     </button>
