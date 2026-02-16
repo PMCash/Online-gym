@@ -5,7 +5,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
-
+console.log("VERIFY ROUTE HIT") // Debugging log
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const transaction_id = searchParams.get("transaction_id")
@@ -45,14 +45,33 @@ if (!userId) {
     `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard?payment=invalid`
   )
 }
+console.log("FLW RESPONSE:", data) // Debugging log
 
-    await supabase
-      .from("profiles")
-      .update({
-        plan: "premium",
-        premium_expires_at: expiryDate.toISOString(),
-     })
-     .eq("id", userId)
+// Ensure profile exists
+const { data: existingProfile } = await supabase
+  .from("profiles")
+  .select("id")
+  .eq("id", userId)
+  .single()
+
+if (!existingProfile) {
+  await supabase.from("profiles").insert({
+    id: userId,
+    role: "user",
+    plan: "free",
+  })
+}
+
+const { data: updateData, error: updateError } = await supabase
+  .from("profiles")
+  .update({
+    plan: "premium",
+    premium_expires_at: expiryDate.toISOString(),
+  })
+  .eq("id", userId)
+
+console.log("UPDATE RESULT:", updateData)
+console.log("UPDATE ERROR:", updateError)
 
 
     return NextResponse.redirect(
